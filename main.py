@@ -8,23 +8,38 @@ async def main():
     pygame.init()
     pygame.mixer.init()
 
-    # --- Música (segura para navegador) ---
+    # --- Música ---
     try:
         pygame.mixer.music.load(os.path.join("Assets", "audio", "sound1.ogg"))
         pygame.mixer.music.play(-1)
     except pygame.error:
         pass
 
-    # --- Configuración ---
+    # --- Configuración de pantalla ---
     ANCHO = 380
     ALTO = 420
     pantalla = pygame.display.set_mode((ANCHO, ALTO))
     pygame.display.set_caption("Tira piedras 🦁")
 
+    # === MEJORAS PARA CELULAR (especialmente Chrome Android) ===
+    if sys.platform == "emscripten":
+        try:
+            import platform
+            canvas = platform.window.canvas
+            canvas.style.touchAction = "none"
+            canvas.style.userSelect = "none"
+            canvas.style.webkitUserSelect = "none"
+            canvas.style.webkitTouchCallout = "none"
+            canvas.style.msTouchAction = "none"
+        except Exception:
+            pass
+
+    # Colores
     SABANA_FONDO = (128, 191, 255)
     SUELO_COLOR = (128, 128, 128)
     TEXTO_COLOR = (255, 255, 255)
 
+    # Reloj y FPS
     reloj = pygame.time.Clock()
     FPS = 30
     ALTURA_SUELO = 380
