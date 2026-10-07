@@ -228,6 +228,14 @@ async def main():
                             leon.saltar()
                         else:
                             reiniciar_partida()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if en_menu:
+                    en_menu = False  # Tocar para empezar
+            else:
+                if not game_over:
+                    leon.saltar()  # Tocar para saltar
+                else:
+                    reiniciar_partida()
 
         # ---------- MENÚ ----------
         if en_menu:
