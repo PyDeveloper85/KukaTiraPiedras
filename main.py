@@ -229,18 +229,6 @@ async def main():
                         else:
                             reiniciar_partida()
 
-            # 2. TOUCHSCREEN TAPS (Android Chrome)
-            # We catch BOTH mouse clicks and finger touches, and we REMOVE "evento.button == 1"
-            elif evento.type in (pygame.MOUSEBUTTONDOWN, pygame.FINGERDOWN):
-                if en_menu:
-                    # ANY tap on the phone screen breaks the menu and starts the game
-                    en_menu = False
-                else:
-                    if not game_over:
-                        leon.saltar()
-                    else:
-                        reiniciar_partida()
-
         # ---------- MENÚ ----------
         if en_menu:
             pantalla.fill(SABANA_FONDO)
