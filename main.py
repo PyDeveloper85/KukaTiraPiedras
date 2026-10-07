@@ -211,6 +211,7 @@ async def main():
     # BUCLE PRINCIPAL
     # ============================================
     while jugando:
+
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 jugando = False
@@ -228,12 +229,16 @@ async def main():
                             leon.saltar()
                         else:
                             reiniciar_partida()
-            if evento.type == pygame.FINGERDOWN:
-                if en_menu:
-                    en_menu = False  # Tocar para empezar
+
+        # === CONTROL POR TOQUE / CLIC (más confiable en celular) ===
+        mouse_presionado = pygame.mouse.get_pressed()[0]  # botón izquierdo / toque
+
+        if mouse_presionado:
+            if en_menu:
+                en_menu = False
             else:
                 if not game_over:
-                    leon.saltar()  # Tocar para saltar
+                    leon.saltar()
                 else:
                     reiniciar_partida()
 
