@@ -6,7 +6,7 @@ import pygame
 
 async def main():
     pygame.init()
-    pygame.mixer.init()
+    pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
 
     # --- Música ---
     try:
@@ -226,15 +226,12 @@ async def main():
     # BUCLE PRINCIPAL
     # ============================================
     while jugando:
-
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                jugando = False
-                pygame.mixer.quit()
-                pygame.quit()
-                sys.exit()
+                running = False
 
-            if evento.type == pygame.KEYDOWN:
+            # --- DESKTOP CONTROLS (Keyboard) ---
+            elif evento.type == pygame.KEYDOWN:
                 if en_menu:
                     if evento.key in (pygame.K_SPACE, pygame.K_RETURN):
                         en_menu = False
@@ -245,17 +242,20 @@ async def main():
                         else:
                             reiniciar_partida()
 
-        # === CONTROL POR TOQUE / CLIC (más confiable en celular) ===
-        mouse_presionado = pygame.mouse.get_pressed()[0]  # botón izquierdo / toque
-
-        if mouse_presionado:
-            if en_menu:
-                en_menu = False
-            else:
-                if not game_over:
-                    leon.saltar()
+            # --- MOBILE CONTROLS (Touchscreen) ---
+            elif evento.type == pygame.FINGERDOWN:
+                if en_menu:
+                    # Touching the screen anywhere starts the game
+                    en_menu = False
                 else:
-                    reiniciar_partida()
+                    if not game_over:
+                        # Touching the screen anywhere makes the lion jump
+                        leon.saltar()
+                    else:
+                        # Touching the screen anywhere restarts the game
+                        reiniciar_partida()
+
+
 
         # ---------- MENÚ ----------
         if en_menu:
