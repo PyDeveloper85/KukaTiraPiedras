@@ -322,15 +322,21 @@ async def main():
 
             # HUD
             texto_puntos = fuente.render(f"DIAS DE GESTION: {int(puntuacion)}", True, TEXTO_COLOR)
-            texto_record_vivo = fuente.render(f"RÉCORD: {record_maximo}", True, (50, 50, 50))
+            texto_record_vivo = fuente.render(f"MAXIMA SUPERVIVENCIA: {record_maximo}", True, (50, 50, 50))
             pantalla.blit(texto_puntos, (10, 10))
             pantalla.blit(texto_record_vivo, (ANCHO - texto_record_vivo.get_width() - 10, 10))
+            pantalla.blit(texto_instrucciones, (ANCHO // 2 - texto_instrucciones.get_width() // 2, ALTO // 2 + 40))
+            # Créditos
+            texto_creditos = fuente.render("Desarrollado en Pygame - Hecho con amor en colaboracion con Grok", True, (200, 200, 200))
+            pantalla.blit(texto_creditos, (ANCHO // 2 - texto_creditos.get_width() // 2, ALTO - 35))
 
             if game_over:
-                texto_fin = fuente_grande.render("¡FIN DEL JUEGO!", True, (139, 0, 0))
+                texto_fin = fuente_grande.render("¡VOLTADO POR KUKAS!", True, (139, 0, 0))
                 texto_reiniciar = fuente.render("Presiona ESPACIO para volver a rugir", True, TEXTO_COLOR)
                 pantalla.blit(texto_fin, (ANCHO // 2 - texto_fin.get_width() // 2, ALTO // 2 - 50))
                 pantalla.blit(texto_reiniciar, (ANCHO // 2 - texto_reiniciar.get_width() // 2, ALTO // 2 + 10))
+
+
 
         pygame.display.flip()
         reloj.tick(FPS)
