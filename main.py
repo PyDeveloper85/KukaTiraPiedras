@@ -21,19 +21,6 @@ async def main():
     pantalla = pygame.display.set_mode((ANCHO, ALTO))
     pygame.display.set_caption("Tira piedras 🦁")
 
-    # === MEJORAS PARA CELULAR (especialmente Chrome Android) ===
-    if sys.platform == "emscripten":
-        try:
-            import platform
-            canvas = platform.window.canvas
-            canvas.style.touchAction = "none"
-            canvas.style.userSelect = "none"
-            canvas.style.webkitUserSelect = "none"
-            canvas.style.webkitTouchCallout = "none"
-            canvas.style.msTouchAction = "none"
-        except Exception:
-            pass
-
     # Colores
     SABANA_FONDO = (128, 191, 255)
     SUELO_COLOR = (128, 128, 128)
@@ -230,7 +217,7 @@ async def main():
             if evento.type == pygame.QUIT:
                 running = False
 
-            # --- DESKTOP CONTROLS (Keyboard) ---
+            # 1. KEYBOARD (Desktop testing)
             elif evento.type == pygame.KEYDOWN:
                 if en_menu:
                     if evento.key in (pygame.K_SPACE, pygame.K_RETURN):
@@ -242,20 +229,17 @@ async def main():
                         else:
                             reiniciar_partida()
 
-            # --- MOBILE CONTROLS (Touchscreen) ---
-            elif evento.type == pygame.FINGERDOWN:
+            # 2. TOUCHSCREEN TAPS (Android Chrome)
+            # We catch BOTH mouse clicks and finger touches, and we REMOVE "evento.button == 1"
+            elif evento.type in (pygame.MOUSEBUTTONDOWN, pygame.FINGERDOWN):
                 if en_menu:
-                    # Touching the screen anywhere starts the game
+                    # ANY tap on the phone screen breaks the menu and starts the game
                     en_menu = False
                 else:
                     if not game_over:
-                        # Touching the screen anywhere makes the lion jump
                         leon.saltar()
                     else:
-                        # Touching the screen anywhere restarts the game
                         reiniciar_partida()
-
-
 
         # ---------- MENÚ ----------
         if en_menu:
