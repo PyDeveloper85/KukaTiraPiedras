@@ -6,29 +6,27 @@ import pygame
 
 async def main():
     pygame.init()
-    pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
+    pygame.mixer.init()
 
-    # --- Música ---
+    # --- Música (segura para navegador) ---
     try:
         pygame.mixer.music.load(os.path.join("Assets", "audio", "sound1.ogg"))
         pygame.mixer.music.play(-1)
     except pygame.error:
         pass
 
-    # --- Configuración de pantalla ---
+    # --- Configuración ---
     ANCHO = 380
     ALTO = 420
     pantalla = pygame.display.set_mode((ANCHO, ALTO))
     pygame.display.set_caption("Tira piedras 🦁")
 
-    # Colores
     SABANA_FONDO = (128, 191, 255)
     SUELO_COLOR = (128, 128, 128)
     TEXTO_COLOR = (255, 255, 255)
 
-    # Reloj y FPS
     reloj = pygame.time.Clock()
-    FPS = 30
+    FPS = 50
     ALTURA_SUELO = 380
 
     # --- Carga de imágenes ---
@@ -154,13 +152,17 @@ async def main():
     class Bird(Obstaculo):
         def __init__(self, velocidad, x_pos=ANCHO, variant=0):
             super().__init__(velocidad, x_pos)
+
             # Tamaño más pequeño
             self.ancho = 55
             self.alto = 45
+
             # Posicionada un poco por encima de las rocas y arbustos
             self.y = ALTURA_SUELO - self.alto - 55  # ← aquí controlas cuánto más arriba va
+
             img = bird01 if variant == 0 else bird02
             self.imagen = pygame.transform.scale(img, (self.ancho, self.alto))
+
         def obtener_rect(self):
             # Hitbox más ajustada al tamaño pequeño
             return pygame.Rect(
@@ -169,7 +171,6 @@ async def main():
                 self.ancho - 16,
                 self.alto - 16
             )
-
 
     # ============================================
     # VARIABLES DEL JUEGO
@@ -184,7 +185,7 @@ async def main():
     fondo_x2 = ANCHO
 
     fuente = pygame.font.SysFont("Orbitron", 25)
-    fuente_grande = pygame.font.SysFont("Orbitron", 50)
+    fuente_grande = pygame.font.SysFont("Orbitron", 20)
     fuente_titulo = pygame.font.SysFont("Orbitron", 50, bold=True)
 
     en_menu = True
@@ -215,10 +216,12 @@ async def main():
     while jugando:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                running = False
+                jugando = False
+                pygame.mixer.quit()
+                pygame.quit()
+                sys.exit()
 
-            # 1. KEYBOARD (Desktop testing)
-            elif evento.type == pygame.KEYDOWN:
+            if evento.type == pygame.KEYDOWN:
                 if en_menu:
                     if evento.key in (pygame.K_SPACE, pygame.K_RETURN):
                         en_menu = False
@@ -322,21 +325,22 @@ async def main():
 
             # HUD
             texto_puntos = fuente.render(f"DIAS DE GESTION: {int(puntuacion)}", True, TEXTO_COLOR)
-            texto_record_vivo = fuente.render(f"MAXIMA SUPERVIVENCIA: {record_maximo}", True, (50, 50, 50))
+            texto_record_vivo = fuente.render(f"RÉCORD: {record_maximo}", True, (50, 50, 50))
             pantalla.blit(texto_puntos, (10, 10))
             pantalla.blit(texto_record_vivo, (ANCHO - texto_record_vivo.get_width() - 10, 10))
-            pantalla.blit(texto_instrucciones, (ANCHO // 2 - texto_instrucciones.get_width() // 2, ALTO // 2 + 40))
-            # Créditos
-            texto_creditos = fuente.render("Desarrollado en Pygame - Hecho con amor en colaboracion con Grok", True, (200, 200, 200))
-            pantalla.blit(texto_creditos, (ANCHO // 2 - texto_creditos.get_width() // 2, ALTO - 35))
+
+            # Créditos (fuente más pequeña para que entre bien)
+            fuente_creditos = pygame.font.SysFont("Orbitron", 16)
+            texto_creditos = fuente_creditos.render("Hecho con amor junto con Grok", True,
+                                                    (180, 180, 180))
+            pantalla.blit(texto_creditos, (ANCHO // 2 - texto_creditos.get_width() // 2, ALTO - 28))
+
 
             if game_over:
-                texto_fin = fuente_grande.render("¡VOLTADO POR KUKAS!", True, (139, 0, 0))
+                texto_fin = fuente_grande.render("¡VOLTEADO POR KUKAS!", True, (139, 0, 0))
                 texto_reiniciar = fuente.render("Presiona ESPACIO para volver a rugir", True, TEXTO_COLOR)
                 pantalla.blit(texto_fin, (ANCHO // 2 - texto_fin.get_width() // 2, ALTO // 2 - 50))
                 pantalla.blit(texto_reiniciar, (ANCHO // 2 - texto_reiniciar.get_width() // 2, ALTO // 2 + 10))
-
-
 
         pygame.display.flip()
         reloj.tick(FPS)
